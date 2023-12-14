@@ -1,0 +1,91 @@
+task 22
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.util.List;
+
+public class FormAutomation {
+
+    public static void main(String[] args) {
+        // Set the path to the chromedriver executable
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+
+        // Create a Chrome browser instance
+        WebDriver driver = new ChromeDriver();
+
+        // Maximize the browser window
+        driver.manage().window().maximize();
+
+        // Navigate to the form page of phptravels.com
+        driver.get("https://phptravels.com/demo/");
+
+        // Find and fill in the form details
+        fillForm(driver);
+
+        // Add logic for sum verification
+        verifySum(driver);
+
+        // Submit the form
+        WebElement submitButton = driver.findElement(By.xpath("//button[@type='submit']"));
+        submitButton.click();
+
+        // Wait for the success message to be displayed
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebElement successMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("alert-success")));
+
+        // Verify that the form is submitted successfully
+        if (successMessage.isDisplayed()) {
+            System.out.println("Form submitted successfully. Message: " + successMessage.getText());
+        } else {
+            System.out.println("Form submission failed.");
+        }
+
+        // Take a screenshot of the page after form submission
+        // Note: You can use a library like Ashot for a full-page screenshot
+        // Example: https://github.com/pazone/ashot
+        // Code: Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1000)).takeScreenshot(driver);
+        // ImageIO.write(screenshot.getImage(), "PNG", new File("screenshot.png"));
+
+        // Close the browser
+        driver.quit();
+    }
+
+    private static void fillForm(WebDriver driver) {
+        // Find and fill in the form elements
+        WebElement nameInput = driver.findElement(By.name("name"));
+        nameInput.sendKeys("John Doe");
+
+        WebElement emailInput = driver.findElement(By.name("email"));
+        emailInput.sendKeys("john.doe@example.com");
+
+        WebElement phoneInput = driver.findElement(By.name("phone"));
+        phoneInput.sendKeys("1234567890");
+
+        WebElement adultsDropdown = driver.findElement(By.name("adults"));
+        adultsDropdown.sendKeys("2");
+
+        WebElement childrenDropdown = driver.findElement(By.name("children"));
+        childrenDropdown.sendKeys("1");
+
+        // Add logic to fill in other form elements as needed
+    }
+
+    private static void verifySum(WebDriver driver) {
+        // Find and verify the sum
+        List<WebElement> checkboxes = driver.findElements(By.name("extras[]"));
+        checkboxes.get(0).click();
+        checkboxes.get(1).click();
+
+        int sum = Integer.parseInt(driver.findElement(By.id("totalprice")).getText());
+        int expectedSum = 20; // Example: Add the expected sum logic based on selected checkboxes
+
+        if (sum == expectedSum) {
+            System.out.println("Sum verification successful.");
+        } else {
+            System.out.println("Sum verification failed.");
+        }
+    }
+}
